@@ -1,5 +1,4 @@
 // src/components/GoogleLoginButton.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
@@ -8,12 +7,12 @@ export default function GoogleLoginButton() {
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
-    console.log("🔍 handleGoogleLogin called");    // ←追加
+    console.log("🔍 handleGoogleLogin called");
     try {
       await signInWithPopup(auth, googleProvider);
-      console.log("✅ signInWithPopup succeeded");  // ←追加
+      console.log("✅ signInWithPopup succeeded");
       navigate("/role-select");
-      console.log("➡️ navigate to /role-select");   // ←追加
+      console.log("➡️ navigate to /role-select");
     } catch (error) {
       console.error("❌ Google login error:", error);
       alert("ログイン失敗:" + error);

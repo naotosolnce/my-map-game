@@ -11,6 +11,9 @@ export default function GoogleLoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+
+      console.log("ログインユーザーのUID:", auth.currentUser?.uid); // ここでUIDを表示
+
       navigate('/role');
     } catch (error) {
       console.error(error);
