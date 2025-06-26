@@ -6,7 +6,8 @@ import type { GeocodingResult } from './geocodingService';
 export interface LocationData {
   id: string;
   areaId: string;
-  address: string;
+  address: string;              // 表示用の日本語住所
+  mapboxAddress?: string;       // Mapboxの住所（参考用）
   lat: number;
   lng: number;
   status: 'uncompleted' | 'reserved' | 'uploading' | 'completed';
@@ -34,11 +35,17 @@ export const saveLocationsToFirestore = async (
     const locationId = `${areaId}_${index}`;
     const locationRef = doc(db, 'locations', locationId);
     
+    // データの検証
+    const address = result.originalAddress || result.mapboxAddress || `住所${index + 1}`;
+    const lat = isFinite(result.lat) ? result.lat : 0;
+    const lng = isFinite(result.lng) ? result.lng : 0;
+    
     batch.set(locationRef, {
       areaId,
-      address: result.fullAddress,
-      lat: result.lat,
-      lng: result.lng,
+      address: address,                                   // 日本語住所を保存
+      mapboxAddress: result.mapboxAddress || null,        // Mapbox住所は参考用
+      lat: lat,
+      lng: lng,
       status: 'uncompleted',
       reservedBy: null,
       reservedAt: null,
@@ -50,6 +57,7 @@ export const saveLocationsToFirestore = async (
   });
   
   await batch.commit();
+  console.log(`${geocodingResults.length}件のピンを保存しました（日本語住所使用）`);
 };
 
 // 位置情報のステータスを更新
